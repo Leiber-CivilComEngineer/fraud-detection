@@ -3,21 +3,21 @@ spring:
     name: transaction-api
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: kafka:9092
       group-id: fraud-detector-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/fraud_detection
-    username: leiber
-    password: secret
+    url: jdbc:postgresql://db:5432/frauddb
+    username: frauduser
+    password: fraudpass
 
   jpa:
     hibernate:
@@ -35,9 +35,6 @@ management:
     web:
       exposure:
         include: health, info, prometheus
-  endpoint:
-    prometheus:
-      enabled: true
   prometheus:
     metrics:
       export:
