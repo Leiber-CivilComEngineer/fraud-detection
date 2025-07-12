@@ -1,8 +1,25 @@
 version: '3.8'
 
 services:
+  app:
+    build: .
+    container_name: fraud-app
+    ports:
+      - "9090:9090"
+    depends_on:
+      - db
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/frauddb
+      SPRING_DATASOURCE_USERNAME: frauduser
+      SPRING_DATASOURCE_PASSWORD: fraudpass
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - fraudnet
+
   db:
     image: postgres:15
+    container_name: fraud-db
     environment:
       POSTGRES_DB: frauddb
       POSTGRES_USER: frauduser
@@ -16,6 +33,7 @@ services:
 
   zookeeper:
     image: wurstmeister/zookeeper:3.4.6
+    container_name: zookeeper
     ports:
       - "2181:2181"
     networks:
@@ -23,6 +41,7 @@ services:
 
   kafka:
     image: wurstmeister/kafka:2.13-2.7.0
+    container_name: kafka
     ports:
       - "9092:9092"
     environment:
@@ -31,43 +50,9 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: "-Xmx256M -Xms128M"
     depends_on:
       - zookeeper
-    networks:
-      - fraudnet
-
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    ports:
-      - "9091:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - fraudnet
-    restart: always
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    networks:
-      - fraudnet
-    restart: always
-
-  app:
-    build: .
-    ports:
-      - "9090:9090"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/frauddb
-      SPRING_DATASOURCE_USERNAME: frauduser
-      SPRING_DATASOURCE_PASSWORD: fraudpass
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    depends_on:
-      - db
-      - kafka
     networks:
       - fraudnet
 
