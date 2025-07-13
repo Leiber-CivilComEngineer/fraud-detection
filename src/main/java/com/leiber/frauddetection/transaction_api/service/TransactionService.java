@@ -3,9 +3,11 @@ package com.leiber.frauddetection.transaction_api.service;
 import com.leiber.frauddetection.transaction_api.metrics.FraudMetrics;
 import com.leiber.frauddetection.transaction_api.model.Transaction;
 import com.leiber.frauddetection.transaction_api.repository.TransactionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class TransactionService {
 
@@ -16,17 +18,20 @@ public class TransactionService {
     private FraudMetrics fraudMetrics;
 
     public void processTransaction(Transaction transaction) {
-        // Total count + 1
+        // Increase total count
         fraudMetrics.incrementTransactionCount();
 
         // Save to DB
         transactionRepository.save(transaction);
-        System.out.println("✅ Saved transaction to DB: " + transaction.getTransactionId());
+        log.info("✅ Saved transaction to DB: ID={}", transaction.getTransactionId());
 
-        // Check fraud
+        // Fraud check
         if (isFraudulent(transaction)) {
             fraudMetrics.incrementFraudCount();
-            System.out.println("🚨 Potential fraud detected!");
+            log.warn("🚨 Fraudulent transaction detected: ID={}, amount={}, user={}",
+                    transaction.getTransactionId(),
+                    transaction.getAmount(),
+                    transaction.getUserId());
         }
     }
 
