@@ -18,6 +18,10 @@ public class TransactionService {
     private FraudMetrics fraudMetrics;
 
     public void processTransaction(Transaction transaction) {
+        if (transaction.getAmount() <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+
         // Increase total count
         fraudMetrics.incrementTransactionCount();
 
