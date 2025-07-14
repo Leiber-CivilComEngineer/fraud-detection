@@ -4,6 +4,8 @@ A lightweight, full-cycle microservice application built with **Spring Boot**, *
 
 This project is designed to simulate a real-time fraud detection pipeline and demonstrate key technologies across backend microservices, observability, and DevOps automation.
 
+<img src="./structure.png" alt="image-20250714234301696" style="zoom: 75%;" />
+
 ---
 
 ## 📦 Features
@@ -162,7 +164,7 @@ Secrets required in GitHub:
 
 ## 👨‍💻 Author
 
-Leiber Lyu — Software Engineer  
+Leiber Lyu(leiber1117@gmail.com) — Software Engineer
 Australia 🇦🇺  
 
 ---
